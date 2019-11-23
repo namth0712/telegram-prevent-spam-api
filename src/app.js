@@ -1,7 +1,6 @@
 const dotenv = require('dotenv');
 dotenv.config();
 const Telegraf = require('telegraf');
-console.log('===process.env.BOT_TOKEN===', process.env.BOT_TOKEN);
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const isURL = str => {
@@ -28,13 +27,13 @@ bot.use(function(ctx, next) {
 
 bot.on(['text', 'photo'], ctx => {
   const {
-    message: { text },
+    message: { text, photo },
   } = ctx;
   // check member is admin or not
   if (ctx.from._is_in_admin_list) {
     return true;
   } else {
-    if (isURL(text)) {
+    if (isURL(text) || (photo && photo.length)) {
       // Delete message
       bot.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id);
       // Kick member
